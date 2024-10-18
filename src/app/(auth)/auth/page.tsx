@@ -7,11 +7,14 @@ import Image from "next/image";
 import AuthForm from "../_components/auth-form";
 
 import ProtectAuth from "../_components/protect-auth";
+import { Suspense } from "react";
 
 const Auth = () => {
   return (
     <ProtectAuth>
-      <MainMobileHeader routes={routes} />
+      <Suspense>
+        <MainMobileHeader routes={routes} />
+      </Suspense>
 
       <section className="relative mx-auto flex w-full flex-col gap-12 px-4 sm:px-8 lg:px-20">
         <div className="pointer-events-none fixed inset-x-20 inset-y-0 mx-auto grid w-full max-w-screen-2xl grid-cols-10 max-lg:hidden">

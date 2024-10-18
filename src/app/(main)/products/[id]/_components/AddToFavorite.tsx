@@ -1,75 +1,61 @@
 "use client";
 
-import { env } from "@/env";
-import { cn, getToken, jst } from "@/lib/utils";
+import { cn, getToken } from "@/lib/utils";
 import { Product } from "@/types/entity";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { revalidatePath } from "next/cache";
 import React from "react";
+import useFavorite from "./use-favorite";
 import toast from "react-hot-toast";
 
 export default function AddToFavorite({
   children,
   className,
   product,
-  favorite,
+  favoriteTransition,
+  setFavoriteTransition,
 }: {
   children: React.ReactNode;
   className: string;
   product: Product;
-  favorite: boolean;
+  favoriteTransition: boolean;
+  setFavoriteTransition: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const queryClient = useQueryClient();
 
-  const addAndRemoveToFavorite = useMutation({
-    mutationFn: async () => {
-      console.log(product.Code, favorite);
-      const res = await fetch(
-        jst(
-          env.NEXT_PUBLIC_BACKEND_URL,
-          `/api/product/favorite${favorite ? "/" + product.Code : ""}`,
-        ),
-        {
-          method: favorite ? "DELETE" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${getToken("access")}`,
-          },
-          body: JSON.stringify({
-            product: product.Code,
-          }),
-        },
-      );
-
-      // console.log(await res.json());
-
-      const data = await res.json();
-
-      if (!res?.ok) {
-        toast.error(data.detail);
-
-        return false;
-      }
-
-      toast.success(data.detail);
-
-      queryClient.invalidateQueries({
-        queryKey: ["favorites", "products", "cart"],
-        refetchType: "all",
-      });
-
-      revalidatePath(`/products/${product.Name}`);
-
-      return true;
-    },
-  });
+  const { addToFavorite, removeFavorite } = useFavorite();
 
   return (
     <button
       className={cn(className)}
-      onClick={(event) => {
+      onClick={async (event) => {
         event.stopPropagation();
-        addAndRemoveToFavorite.mutate();
+        event.preventDefault();
+
+        if (!getToken("access")) return toast.error("شما لاگین نیستید.");
+
+        if (favoriteTransition) {
+          const res = removeFavorite.mutate(
+            {
+              productId: product.Code,
+            },
+            {
+              onSuccess: (res) => {
+                res && setFavoriteTransition(false);
+              },
+            },
+          );
+
+        } else {
+          const res = addToFavorite.mutate(
+            {
+              productId: product.Code,
+            },
+            {
+              onSuccess: (res) => {
+                res && setFavoriteTransition(true);
+              },
+            },
+          );
+
+        }
       }}>
       {children}
     </button>

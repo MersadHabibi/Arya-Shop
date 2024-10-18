@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-/* * {
-  @apply !border !bg-green-600/20;
-} */
+@layer base {
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield; /* Firefox */
+  }
+
+  p {
+    @apply text-xl;
+  }
+
+  .price-list-table {
+    border-collapse: collapse;
+    border-style: hidden; /* hide standard table (collapsed) border */
+    box-shadow: 0 0 0 1px #6a6a6a; /* this draws the table border  */
+    padding-bottom: 10px;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+}

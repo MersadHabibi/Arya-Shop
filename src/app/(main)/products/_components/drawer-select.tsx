@@ -80,8 +80,7 @@ const DrawerSelect = ({ label, onChange, options, value }: Props) => {
                 }}
                 type="button"
                 className="flex w-full items-center justify-between px-6 py-2 text-lg"
-                key={item.value}
-              >
+                key={item.value}>
                 {item.display}
 
                 <Icon icon={RiArrowRightSLine} />

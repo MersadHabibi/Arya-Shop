@@ -1,9 +1,76 @@
-"use client";
-
 import Profits from "@/components/layout/profits";
+import { env } from "@/env";
 import Image from "next/image";
+import Link from "next/link";
 
-const Page = () => {
+interface BlogIndexPage {
+  id: number;
+  title: string;
+  intro: string;
+}
+
+interface FeaturedPosts {
+  page:{
+    id: number;
+    title: string;
+    intro: string;
+    slug: string;
+    header_image: {
+      url: string;
+      title: string;
+    };
+    author: string;
+  }
+}
+
+interface BlogPage {
+  id: number;
+  meta: {
+    slug: string;
+  };
+  title: string;
+  date: string;
+  intro: string;
+  author: string;
+  header_image: {
+    url: string;
+    title: string;
+  };
+}
+
+export default async function BlogIndex() {
+  const indexPages = await fetch(
+    `${env.NEXT_PUBLIC_IMAGE_URL}/blog/api/v2/pages/?${new URLSearchParams({
+      type: "blog.BlogIndexPage",
+      slug: "blog",
+      fields: ["featured_posts", "intro"].join(","),
+    })}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  ).then((response) => response.json());
+
+  const index: BlogIndexPage = indexPages.items[0];
+  const featured_posts: FeaturedPosts[] = indexPages.items[0].featured_posts
+
+  const data = await fetch(
+    `${env.NEXT_PUBLIC_IMAGE_URL}/blog/api/v2/pages/?${new URLSearchParams({
+      type: "blog.BlogPage",
+      child_of: index.id.toString(),
+      fields: ["intro", "header_image", "author"].join(","),
+    })}`,
+    {
+      cache: 'no-cache',
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  ).then((response) => response.json());
+
+  const posts: BlogPage[] = data.items;
+
   return (
     <>
       <div className="mx-auto flex w-full max-w-screen-3xl flex-col gap-24 px-6 lg:px-20">
@@ -14,31 +81,43 @@ const Page = () => {
           </div>
 
           <div className="grid w-full gap-8 lg:grid-cols-2">
-            {Array(4)
-              .fill("")
-              .map((_, idx) => (
+            {featured_posts.map((child, idx) => (
+              <Link
+                href={`magazine/${child.page.slug}`}
+                key={idx}
+              >
                 <article
-                  key={idx}
                   className="flex h-60 gap-6 rounded-2xl border border-base-200 p-4"
                 >
-                  <div className="aspect-square h-full shrink-0 rounded-lg bg-base-200"></div>
+                  {child.page?.header_image ? (
+                    <div className="relative aspect-[200/200] overflow-hidden rounded-lg">
+                    <Image
+                    alt={child.page.header_image.title}
+                    src={env.NEXT_PUBLIC_IMAGE_URL + child.page.header_image.url}
+                    className="object-contain"
+                    fill
+                    />
+                    </div>
+                    ) : (
+                      <div className="aspect-square h-full shrink-0 rounded-lg bg-base-200"></div>
+                    )}
+                  
 
                   <div className="flex flex-col gap-2">
                     <h3 className="text-[40px] font-bold leading-normal">
-                      نام مقاله
+                      {child.page.title}
                     </h3>
 
                     <p className="line-clamp-3 text-xl leading-normal">
-                      مختصری از شرح مقاله در این قسمت نوشته شود. مختصری از شرح
-                      مقاله در این قسمت نوشته شود. مختصری از شرح مقاله در این
-                      قسمت نوشته شود....
+                      {child.page.intro}
                     </p>
 
                     <p className="text-base leading-normal text-secondary">
-                      نویسنده: نام و نام خانوادگی
+                      نویسنده: {child.page?.author ? child.page.author : "کاربر آریا"}
                     </p>
                   </div>
                 </article>
+              </Link>
               ))}
           </div>
         </div>
@@ -50,31 +129,42 @@ const Page = () => {
           </div>
 
           <div className="grid w-full grid-cols-[repeat(auto-fit,300px)] justify-center gap-8">
-            {Array(12)
-              .fill("")
-              .map((_, idx) => (
+            {posts.map((instance) => (
+              <Link
+              href={`magazine/${instance.meta.slug}`}
+              key={instance.id}
+            >
                 <article
-                  key={idx}
                   className="flex h-fit flex-col gap-2 rounded-2xl border border-base-200 p-4"
                 >
-                  <div className="aspect-[26/20] w-full shrink-0 rounded-lg bg-base-200"></div>
+                  {instance?.header_image ? (
+                    <div className="relative aspect-[26/20] shrink-0 overflow-hidden rounded-lg">
+                    <Image
+                    alt={instance.header_image.title}
+                    src={env.NEXT_PUBLIC_IMAGE_URL + instance.header_image.url}
+                    className="object-contain"
+                    fill
+                    />
+                    </div>
+                    ) : (
+                      <div className="aspect-[26/20] w-full shrink-0 rounded-lg bg-base-200"></div>
+                    )}
 
                   <div className="flex flex-col gap-2">
                     <h3 className="line-clamp-1 text-xl font-bold leading-normal">
-                      نام مقاله
+                      {instance.title}
                     </h3>
 
                     <p className="line-clamp-3 text-xl leading-normal">
-                      مختصری از شرح مقاله در این قسمت نوشته شود. مختصری از شرح
-                      مقاله در این قسمت نوشته شود. مختصری از شرح مقاله در این
-                      قسمت نوشته شود....
+                      {instance.intro}
                     </p>
 
                     <p className="text-xl leading-normal text-secondary">
-                      نویسنده: نام و نام خانوادگی
+                      نویسنده: {instance.author}
                     </p>
                   </div>
                 </article>
+                </Link>
               ))}
           </div>
         </div>
@@ -85,6 +175,4 @@ const Page = () => {
       </div>
     </>
   );
-};
-
-export default Page;
+}

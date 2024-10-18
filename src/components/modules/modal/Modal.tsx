@@ -67,7 +67,6 @@ export default function Modal({
               ? (event) => onSubmit(event)
               : (event) => {
                   event.preventDefault();
-                  console.log("submit");
                 }
         }
         className={cn(

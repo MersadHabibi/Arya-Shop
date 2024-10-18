@@ -3,6 +3,7 @@
 import ProductCard from "@/components/product-card";
 import useFavorites from "./_components/useFavorites";
 import Pagination from "@/components/pagination";
+import { Suspense } from "react";
 
 export default function FavoritePage({
   searchParams,
@@ -10,8 +11,6 @@ export default function FavoritePage({
   searchParams: { page: number };
 }) {
   const favorites = useFavorites({ page: searchParams.page });
-
-  console.log(favorites.data);
 
   if (favorites.isLoading)
     return (
@@ -29,11 +28,11 @@ export default function FavoritePage({
       </span>
 
       {favorites.data?.results.length ? (
-        <div className="relative grid w-full grid-cols-[repeat(auto-fit,minmax(304px,1fr))] justify-between gap-6">
+        <div className="relative grid w-full grid-cols-1 justify-between gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 2xl:grid-cols-3">
           {favorites.data?.results.map((product, idx) => (
             <ProductCard
               className="h-fit !w-full border border-base-200"
-              key={idx}
+              key={product.Code}
               data={product}
             />
           ))}
@@ -44,13 +43,15 @@ export default function FavoritePage({
 
       <div className="mt-20 hidden w-full lg:block">
         {!!favorites.data?.results.length && (
-          <Pagination
-            pageKey="page"
-            pageSize={10}
-            count={favorites.data.count}
-            next={favorites.data.next}
-            previous={favorites.data.previous}
-          />
+          <Suspense>
+            <Pagination
+              pageKey="page"
+              pageSize={10}
+              count={favorites.data.count}
+              next={favorites.data.next}
+              previous={favorites.data.previous}
+            />
+          </Suspense>
         )}
       </div>
     </div>

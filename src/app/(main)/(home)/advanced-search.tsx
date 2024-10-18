@@ -32,19 +32,15 @@ const HomeAdvancedSearch = ({ brands, categories }: Props) => {
       q.append("category", category.value);
     }
 
-    if (q.size) return;
-
     router.push(jst("/products?", q.toString()));
   };
 
   return (
-    <div className="z-[1] mx-auto flex h-40 w-full max-w-fit gap-14 rounded-3xl border border-base-200 bg-base-100 px-7 py-9 shadow-lg">
-      <div>
-        <span className="text-center text-4xl font-extrabold text-secondary">
-          جستجو
-          <br />
-          پیشرفته
-        </span>
+    <div className="z-[1] mx-auto flex h-fit w-full max-w-fit flex-col gap-5 rounded-3xl border border-base-200 bg-base-100 px-9 py-9 shadow-lg xl:flex-row xl:gap-14 xl:px-7">
+      <div className="text-center xl:text-start">
+        <p className="text-center text-4xl/10 font-extrabold text-secondary xl:max-w-32">
+          جستجو پیشرفته
+        </p>
       </div>
 
       <span className="relative inset-y-0 w-0.5 bg-base-200" />
@@ -78,8 +74,7 @@ const HomeAdvancedSearch = ({ brands, categories }: Props) => {
 
         <button
           onClick={() => onClick()}
-          className="btn btn-primary btn-lg rounded-2xl text-2xl font-normal"
-        >
+          className="btn btn-primary btn-lg rounded-2xl text-2xl font-normal">
           جستجو کنید
         </button>
       </div>

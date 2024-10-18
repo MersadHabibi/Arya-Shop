@@ -52,7 +52,7 @@ const NavDrawer = ({ routes }: Props) => {
           </div>
 
           <div className="flex flex-col divide-y divide-base-200">
-            {auth.data || true ? (
+            {auth.data || false ? (
               <Link
                 href={"/profile"}
                 className="flex items-center gap-3 py-4 first:pt-0 last:pb-0"
@@ -78,6 +78,13 @@ const NavDrawer = ({ routes }: Props) => {
                 <span className="text-base">ورود به حساب</span>
               </Link>
             )}
+
+              <Link
+                href="/products"
+                className="flex items-center gap-3 py-4 first:pt-0 last:pb-0"
+              >
+                <span className="text-base">لیست محصولات</span>
+              </Link>
 
             {routes.map(({ path, title }, idx) => (
               <Link

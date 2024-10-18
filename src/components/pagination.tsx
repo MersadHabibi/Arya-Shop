@@ -34,7 +34,7 @@ const Pagination = ({
     return Math.floor(count / pageSize);
   }, [count, pageSize]);
 
-  const naviagte = (target: string) => {
+  const navigate = (target: string) => {
     const q = new URLSearchParams(Array.from(searchParams.entries()));
 
     q.set(pageKey, target);
@@ -46,7 +46,7 @@ const Pagination = ({
     <div className="flex items-center gap-5 text-lg lg:text-2xl">
       <button
         onClick={() => {
-          if (previous) naviagte(String(previous));
+          if (previous) navigate(String(previous));
         }}
         className="whitespace-nowrap text-primary disabled:text-base-300"
         disabled={!previous}>
@@ -57,17 +57,17 @@ const Pagination = ({
 
       <button className="text-secondary">{page}</button>
 
-      {next && <button>{next}</button>}
+      {next ? <button>{next}</button> : null}
 
       {next && pages > next && <span>...</span>}
 
       {next && next !== pages && (
-        <button onClick={() => naviagte(String(pages))}>{pages}</button>
+        <button onClick={() => navigate(String(pages))}>{pages}</button>
       )}
 
       <button
         onClick={() => {
-          if (next) naviagte(String(next));
+          if (next) navigate(String(next));
         }}
         className="whitespace-nowrap text-primary disabled:text-base-300"
         disabled={!next}>

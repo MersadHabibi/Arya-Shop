@@ -1,14 +1,14 @@
 "use client";
 
 import Modal from "@/components/modules/modal/Modal";
-import { cn, getToken, jst } from "@/lib/utils";
-import { useState } from "react";
-import { AddressFormData } from "./NewAddressModalData";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import Icon from "@/components/ui/icon";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { env } from "@/env";
+import { refreshTokenAction } from "@/lib/refreshTokenAction";
+import { getToken, jst } from "@/lib/utils";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 export default function DeleteAddressModal({
   addressId,
@@ -23,6 +23,9 @@ export default function DeleteAddressModal({
 
   const deleteAddress = useMutation({
     mutationFn: async () => {
+      // Refresh token
+      await refreshTokenAction();
+
       const res = await fetch(
         jst(
           env.NEXT_PUBLIC_BACKEND_URL,

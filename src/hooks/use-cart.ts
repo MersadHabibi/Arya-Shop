@@ -1,10 +1,12 @@
 "use client";
 
 import { env } from "@/env";
+import { refreshTokenAction } from "@/lib/refreshTokenAction";
 import { getToken, jst } from "@/lib/utils";
 import { CartResponse } from "@/types/entity";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
+import toast from "react-hot-toast";
 
 const useCart = () => {
   const queryClient = useQueryClient();
@@ -12,6 +14,9 @@ const useCart = () => {
   const cart = useQuery({
     queryKey: ["cart"],
     queryFn: async () => {
+      // Refresh token
+      await refreshTokenAction();
+
       const res = await fetch(
         jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/order/cart"),
         {
@@ -34,6 +39,12 @@ const useCart = () => {
 
   const addToCart = useMutation({
     mutationFn: async (args: { product_id: number; quantity: number }) => {
+      // Refresh token
+      await refreshTokenAction();
+
+      if (!getToken("access"))
+        return toast.error("لطفا وارد حساب کاربری خود شوید.");
+
       const res = await fetch(
         jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/order/cart"),
         {
@@ -62,6 +73,9 @@ const useCart = () => {
 
   const removeFromCart = useMutation({
     mutationFn: async (args: { id: number }) => {
+      // Refresh token
+      await refreshTokenAction();
+
       const req = await fetch(
         jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/order/cart/", String(args.id)),
         {
@@ -89,6 +103,9 @@ const useCart = () => {
 
   const increment = useMutation({
     mutationFn: async (args: { id: number }) => {
+      // Refresh token
+      await refreshTokenAction();
+
       const req = await fetch(
         jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/order/cart"),
         {
@@ -120,6 +137,9 @@ const useCart = () => {
 
   const decrement = useMutation({
     mutationFn: async (args: { id: number }) => {
+      // Refresh token
+      await refreshTokenAction();
+
       const res = await fetch(
         jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/order/cart"),
         {

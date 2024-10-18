@@ -9,37 +9,41 @@ const config: Config = {
   theme: {
     extend: {
       screens: {
-        "2xl": "1500px"
+        "2xl": "1500px",
+        xs: "480px",
       },
       maxWidth: {
-        "screen-3xl": "1700px"
-      }
-    }
+        "screen-3xl": "1700px",
+      },
+    },
   },
   /** @satisfies {import("daisyui").Config} */
   daisyui: {
-    themes: [{
-      light: {
-        ...require("daisyui/src/theming/themes")["light"],
-        primary: "#33449C",
-        secondary: "#7C3996",
-        "primary-content": "#fff",
-        "success-content": "#fff",
-        "error-content": "#fff",
-        "base-content": "#000000",
-        "base-100": "#FFFFFF",
-        "base-200": "#EEEEEE",
-        "base-300": "#878787",
+    themes: [
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["light"],
+          primary: "#33449C",
+          secondary: "#7C3996",
+          "primary-content": "#fff",
+          "success-content": "#fff",
+          "error-content": "#fff",
+          "base-content": "#000000",
+          "base-100": "#FFFFFF",
+          "base-200": "#EEEEEE",
+          "base-300": "#878787",
 
-        "--rounded-btn": "0.5rem",
-      }
-    }, "dark"],
+          "--rounded-btn": "0.5rem",
+        },
+      },
+      "dark",
+    ],
     logs: false,
   },
   plugins: [
     require("@tailwindcss/typography"),
     require("tailwindcss-animate"),
-    require("daisyui")
+    require("daisyui"),
   ],
 };
 export default config;

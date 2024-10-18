@@ -8,7 +8,7 @@ const getAdvancedSearchOptions = async () => {
 
   try {
     const brands: Brand[] = await fetch(
-      jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/product/brand"),
+      jst(env.BACKEND_URL, "/api/product/brand"),
       {
         next: {
           revalidate: 3600,
@@ -16,7 +16,7 @@ const getAdvancedSearchOptions = async () => {
       },
     ).then((res) => res.json());
     const categories: Category[] = await fetch(
-      jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/product/category/list"),
+      jst(env.BACKEND_URL, "/api/product/category/list"),
       {
         next: {
           revalidate: 3600,

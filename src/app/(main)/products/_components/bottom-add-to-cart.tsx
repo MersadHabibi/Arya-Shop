@@ -6,6 +6,7 @@ import useMounted from "@/hooks/use-mounted";
 import { Product } from "@/types/entity";
 import { useMemo } from "react";
 import { createPortal } from "react-dom";
+import toast from "react-hot-toast";
 import { RiAddLine, RiDeleteBinLine, RiSubtractLine } from "react-icons/ri";
 
 type Props = {
@@ -77,11 +78,15 @@ const BottomAddToCart = ({ product }: Props) => {
               <div className="flex h-12 w-full shrink grow-0 items-center justify-between rounded-btn border border-base-200 px-5">
                 <button
                   onClick={() => {
+                    if (inCart.quantity >= product.quantity)
+                      return toast.error("محصول بیشتری موجود نیست!");
+
                     increment.mutate({
                       id: product.Code,
                     });
                   }}
-                  disabled={isPending}>
+                  disabled={isPending || inCart.quantity >= product.quantity}
+                  className="disabled:opacity-70">
                   <Icon className="text-primary" icon={RiAddLine} />
                 </button>
 

@@ -1,4 +1,44 @@
+export type TBrand = { Code: number; image: string; Name: string };
+
+export type TOrderStatus =
+  | "New"
+  | "Accepted"
+  | "Preparing"
+  | "OutCompany"
+  | "InPostOffice"
+  | "OnShipping"
+  | "Arrive"
+  | "Canceled";
+
+export type TOrder = {
+  products: {
+    product: {
+      Name: string;
+      Code: number;
+      galleries: { image: string } | null;
+    };
+    quantity: number;
+    price: number;
+    amount: number;
+  }[];
+  code: string;
+  address_full_name: string;
+  address_phone: string;
+  address_state: string;
+  address_city: string;
+  address_address: string;
+  address_post_code: string;
+  post_way: { id: number; way: string; price: number };
+  pay_way: string;
+  total: number;
+  amount: number;
+  status: TOrderStatus;
+  create_at: Date;
+  update_at: Date;
+};
+
 export type TAddress = {
+  id: number;
   title: string;
   zipcode: string;
   address: string;
@@ -19,12 +59,13 @@ export type Category = {
 };
 
 export type Product = {
-  galleries: { image: string }[] | null;
+  galleries: { image: string } | null;
   price: number;
   Name: string;
   Code: number;
   quantity: number;
-  favorite: boolean,
+  favorite: boolean;
+  description?: string;
 };
 
 export type Profile = {
@@ -66,7 +107,7 @@ export type CartResponse = {
 };
 
 export type CartResponseItem = {
-  product: { Name: string; Code: number };
+  product: { Name: string; Code: number; galleries: { image: string } };
   amount: number;
   quantity: number;
   id: number;

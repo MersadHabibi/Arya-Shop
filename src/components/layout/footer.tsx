@@ -2,12 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Icon from "../ui/icon";
 import {
-  RiCustomerService2Line,
   RiInstagramLine,
   RiPhoneFill,
-  RiShakeHandsLine,
-  RiShoppingBag3Line,
-  RiShoppingBagLine,
+  RiTelegramLine,
   RiWhatsappLine,
 } from "react-icons/ri";
 import { cn } from "@/lib/utils";
@@ -18,8 +15,7 @@ const Footer = ({ className }: { className?: string }) => {
       className={cn(
         "w-full bg-primary px-6 pb-32 pt-12 text-white lg:px-20",
         className,
-      )}
-    >
+      )}>
       <footer className="mx-auto flex h-fit w-full max-w-screen-3xl grid-cols-2 flex-col gap-[75px] lg:grid">
         <div className="flex flex-col gap-12">
           <p className="text-base text-white lg:text-xl ">
@@ -64,8 +60,7 @@ const Footer = ({ className }: { className?: string }) => {
                 <Link
                   href={item.path}
                   className="w-fit text-xs lg:text-xl"
-                  key={item.title}
-                >
+                  key={item.title}>
                   {item.title}
                 </Link>
               ))}
@@ -112,28 +107,24 @@ const footerLinks = [
     title: "دسترسی سریع",
     items: [
       {
-        title: "خدمات پس از فروش",
-        path: "/",
-      },
-      {
         title: "خرید عمده",
-        path: "/",
+        path: "/b2b",
       },
       {
         title: "شرکای تجاری",
-        path: "/",
+        path: "/#brands",
       },
       {
         title: "درباره ما",
-        path: "/",
+        path: "/about-us",
       },
       {
         title: "نظرسنجی",
-        path: "/",
+        path: "https://aryadb.com/%d9%81%d8%b1%d9%85-%d9%86%d8%b8%d8%b1-%d8%b3%d9%86%d8%ac%db%8c/",
       },
       {
         title: "مقالات",
-        path: "/",
+        path: "/magazine",
       },
     ],
   },
@@ -142,15 +133,11 @@ const footerLinks = [
     items: [
       {
         title: "ثبت نظرات شما",
-        path: "/",
-      },
-      {
-        title: "پیگیری سفارشات",
-        path: "/",
+        path: "/contact-us/#comment",
       },
       {
         title: "پرسش‌های متداول",
-        path: "/",
+        path: "/contact-us/#faq",
       },
       {
         title: "حریم خصوصی",
@@ -163,14 +150,18 @@ const footerLinks = [
 const footerSocials = [
   {
     icon: RiPhoneFill,
-    path: "to:30654545",
+    path: "tel:021-91017083",
   },
   {
     icon: RiWhatsappLine,
-    path: "#whatsapp",
+    path: "https://wa.me/989961361138",
+  },
+  {
+    icon: RiTelegramLine,
+    path: "https://t.me/aryapakhsh",
   },
   {
     icon: RiInstagramLine,
-    path: "#instagram",
+    path: "https://instagram.com/aryapakhshrayka",
   },
 ];

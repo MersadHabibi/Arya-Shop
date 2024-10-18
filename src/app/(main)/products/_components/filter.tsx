@@ -1,24 +1,33 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import Icon from "@/components/ui/icon";
 
+import {
+  Slider,
+  SliderRange,
+  SliderThumb,
+  SliderTrack,
+} from "@/components/ui/slider";
+import { Switch, SwitchThumb } from "@/components/ui/switch";
 import { jst } from "@/lib/utils";
 import { Brand, Category } from "@/types/entity";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { RiArrowDownSLine, RiSearchLine } from "react-icons/ri";
+import { RiSearchLine } from "react-icons/ri";
 import AccordionSelect from "./accordion-select";
 
 type Props = {
   brands: Brand[];
   categories: Category[];
 };
+
+export const MIN_PRICE = 0;
+export const MAX_PRICE = 10_000_000;
+
+enum SWITCHES {
+  QUANTITY,
+  DISCOUNT,
+}
 
 const Filter = ({ brands, categories }: Props) => {
   const searchParams = useSearchParams();
@@ -47,6 +56,17 @@ const Filter = ({ brands, categories }: Props) => {
       : null,
   );
 
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    Number(searchParams.get("min"))
+      ? Number(searchParams.get("min"))
+      : MIN_PRICE,
+    Number(searchParams.get("max"))
+      ? Number(searchParams.get("max"))
+      : MAX_PRICE,
+  ]);
+
+  const [quantity, setQuantity] = useState<number>();
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -70,14 +90,22 @@ const Filter = ({ brands, categories }: Props) => {
       sp.delete("category");
     }
 
+    if (priceRange[0] > MIN_PRICE) sp.set("min", priceRange[0].toString());
+    else sp.delete("min");
+
+    if (priceRange[1] < MAX_PRICE) sp.set("max", priceRange[1].toString());
+    else sp.delete("max");
+
+    if (quantity === 0) sp.set("quantity", quantity.toString());
+    else sp.delete("quantity");
+
     router.push(jst("/products", "?", sp.toString()));
   };
 
   return (
     <form
       onSubmit={onSubmit}
-      className="relative flex h-fit w-full flex-col gap-8 rounded-xl border border-base-200 bg-base-100 p-4"
-    >
+      className="relative flex h-fit w-full flex-col gap-8 rounded-xl border border-base-200 bg-base-100 p-4">
       <span className="text-xl font-bold">جستجوی پیشرفته</span>
 
       <div className="relative w-full">
@@ -121,17 +149,25 @@ const Filter = ({ brands, categories }: Props) => {
         }}
       />
 
-      {/* <div className="flex w-full flex-col gap-3 text-base">
+      <div className="flex w-full flex-col gap-3 text-base">
         <span>محدوده قیمت</span>
 
         <Slider
           dir="ltr"
           className="relative flex h-5 w-full touch-none select-none items-center"
-          defaultValue={[0, 100]}
-          step={1}
-          min={0}
-          max={100}
-        >
+          defaultValue={[
+            Number(searchParams.get("min"))
+              ? Number(searchParams.get("min"))
+              : MIN_PRICE,
+            Number(searchParams.get("max"))
+              ? Number(searchParams.get("max"))
+              : MAX_PRICE,
+          ]}
+          step={5_000}
+          minStepsBetweenThumbs={10}
+          min={MIN_PRICE}
+          max={MAX_PRICE}
+          onValueChange={(event) => setPriceRange(event as [number, number])}>
           <SliderTrack className="relative h-0.5 w-full grow rounded-full bg-base-300">
             <SliderRange className="absolute h-full rounded-full bg-primary" />
           </SliderTrack>
@@ -141,39 +177,46 @@ const Filter = ({ brands, categories }: Props) => {
         </Slider>
 
         <div dir="ltr" className="flex items-center justify-between text-xs">
-          <span>100.000 تومان</span>
-          <span>40.000.000 تومان</span>
+          <span>{priceRange[0].toLocaleString("fa-IR")} تومان</span>
+          <span>{priceRange[1].toLocaleString("fa-IR")} تومان</span>
         </div>
-      </div> */}
+      </div>
 
-      {/* <div className="flex w-full flex-col gap-4">
+      <div className="flex w-full flex-col gap-4">
         {[
           {
+            key: SWITCHES.QUANTITY,
             title: "فقط کالاهای موجود",
-            value: true,
+            value: !!searchParams.get("quantity"),
           },
           {
+            key: "",
             title: "فقط کالاهای تخفیف‌دار",
             value: false,
           },
           {
+            key: "",
             title: "خرید عمده",
-            value: true,
+            value: false,
           },
-        ].map(({ title, value }, idx) => (
+        ].map(({ key, title, value }, idx) => (
           <div key={idx} className="flex items-center gap-4 text-base">
             <Switch
               defaultChecked={value}
               dir="ltr"
               className="flex w-12 items-center rounded-full border-2 border-base-200 data-[state=checked]:border-secondary data-[state=checked]:bg-secondary data-[state=unchecked]:bg-base-200"
-            >
+              onCheckedChange={(value) => {
+                if (SWITCHES.QUANTITY === key) {
+                  value ? setQuantity(0) : setQuantity(undefined);
+                }
+              }}>
               <SwitchThumb className="block size-5 rounded-full bg-white transition-all duration-100 data-[state=checked]:ms-[56%]" />
             </Switch>
 
             <span>{title}</span>
           </div>
         ))}
-      </div> */}
+      </div>
 
       {/* <Accordion type="single" collapsible>
         <AccordionItem value="val">

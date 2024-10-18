@@ -3,6 +3,8 @@
 import useCart from "@/hooks/use-cart";
 import CartItem from "./cart-item";
 import CartSkeleton from "./cart-skeleton";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 const Cart = () => {
   const { cart } = useCart();
@@ -57,9 +59,18 @@ const Cart = () => {
             </span>{" "}
           </div>
 
-          <button className="btn btn-primary btn-md btn-block">
-            تکمیل خرید
-          </button>
+          <Link
+            href={"/cart/completion"}
+            className="btn btn-primary btn-md btn-block"
+            onClick={(event) => {
+              if (!cart.data?.carts.length) {
+                event.preventDefault();
+
+                toast.error("سبد خرید خالی است!");
+              }
+            }}>
+            تایید و تکمیل سفارش
+          </Link>
         </div>
       </div>
     </div>

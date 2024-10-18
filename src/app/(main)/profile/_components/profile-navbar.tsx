@@ -1,24 +1,24 @@
 "use client";
 
 import Icon from "@/components/ui/icon";
-import { Profile } from "@/types/entity";
+import { useAuth } from "@/hooks/use-auth";
 import Link from "next/link";
 import {
   RiDashboardHorizontalLine,
-  RiEditLine,
   RiHeartLine,
-  RiLogoutBoxLine,
   RiMapPin2Line,
   RiNotification4Line,
-  RiPulseLine,
   RiShoppingBagLine,
 } from "react-icons/ri";
-import LogoutBtn from "./LogoutBtn";
-import { useAuth } from "@/hooks/use-auth";
+import ChargeWallet from "./ChargeWallet";
 import EditUserInformationModal from "./EditUserInformationModal";
+import LogoutBtn from "./LogoutBtn";
+import { useWallet } from "@/hooks/use-wallet";
 
 const ProfileNavbar = () => {
   const auth = useAuth();
+
+  const { wallet } = useWallet();
 
   return (
     <div className="flex h-fit flex-col gap-4 rounded-2xl bg-base-100 p-4 lg:border lg:border-base-200">
@@ -37,11 +37,11 @@ const ProfileNavbar = () => {
       <div className="flex items-start justify-between">
         <div>
           <p className="">کیف پول</p>
-          <button className="mt-1 font-bold text-primary">
-            + افزایش موجودی
-          </button>
+          <ChargeWallet />
         </div>
-        <p>100.000 تومان</p>
+        <p>
+          <span>{wallet.isLoading ? "..." : wallet.data?.balance}</span> تومان
+        </p>
       </div>
 
       <div className="flex flex-col">
@@ -71,7 +71,7 @@ const routes = [
     icon: RiDashboardHorizontalLine,
   },
   {
-    path: "/profile/last-orders",
+    path: "/profile/orders",
     title: "سفارش‌ها",
     icon: RiShoppingBagLine,
   },

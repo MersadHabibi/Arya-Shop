@@ -5,17 +5,28 @@ import Icon from "@/components/ui/icon";
 import { env } from "@/env";
 import { cn, getToken, jst } from "@/lib/utils";
 import { Category, Comment, PaginatedResponse, Product } from "@/types/entity";
+import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import {
-  RiHeartFill,
-  RiHeartLine,
-  RiImage2Line,
-  RiStarFill,
-} from "react-icons/ri";
+import { RiImage2Line, RiStarFill } from "react-icons/ri";
 import ProductComments from "../_components/product-comments";
 import NewComment from "./_components/NewComment";
-import AddToFavorite from "./_components/AddToFavorite";
+import { cookies } from "next/headers";
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
+  // read route params
+  const id = params.id.split("-").slice(-1)[0];
+
+  const product = await getProductInfo(id);
+
+  return {
+    title: product.data?.Name,
+    description: product.data?.description || "",
+  };
+}
 
 const Caruseal = dynamic(() => import("@/components/ui/caruseal"), {
   loading: () => (
@@ -58,11 +69,12 @@ const getProductInfo = async (id: string) => {
   let error: null | Error = null;
 
   try {
-    data = await fetch(jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/product/", id), {
+    data = await fetch(jst(env.BACKEND_URL, "/api/product/", id), {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken("access")}`,
+        Authorization: `Bearer ${cookies().get("accessToken")?.value}`,
       },
+      cache: "reload",
     }).then((res) => res.json());
   } catch (err) {
     error = err as Error;
@@ -81,7 +93,7 @@ const getComments = async ({ id, page }: GetCommentsProps) => {
 
   try {
     data = await fetch(
-      `${env.NEXT_PUBLIC_BACKEND_URL}/api/product/comment/${id}?page=${page}&page_size=10`,
+      `${env.BACKEND_URL}/api/product/comment/${id}?page=${page}&page_size=10`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -123,12 +135,6 @@ const Page = async ({ params, searchParams }: Props) => {
     getComments({ id, page }),
   ]);
 
-  console.log(
-    "product Info",
-    productInfo.data?.Name,
-    productInfo.data,
-    productInfo.data?.favorite,
-  );
 
   return (
     <>
@@ -138,11 +144,14 @@ const Page = async ({ params, searchParams }: Props) => {
             <div className="flex w-full flex-col gap-4">
               <div>
                 <div className="relative aspect-square w-full overflow-hidden rounded-3xl max-lg:mx-auto max-lg:max-w-sm">
-                  {productInfo.data?.galleries?.[0]?.image ? (
+                  {productInfo.data?.galleries?.image ? (
                     <Image
                       alt={productInfo.data?.Name}
                       unoptimized
-                      src={productInfo.data?.galleries?.[0]?.image}
+                      src={
+                        env.NEXT_PUBLIC_BACKEND_URL +
+                        productInfo.data?.galleries?.image
+                      }
                       fill
                     />
                   ) : (
@@ -156,7 +165,7 @@ const Page = async ({ params, searchParams }: Props) => {
                 </div>
               </div>
 
-              {(productInfo.data?.galleries?.length ?? 0) > 1 && (
+              {/* {(productInfo.data?.galleries?.length ?? 0) > 1 && (
                 <div>
                   <div className="grid w-full grid-cols-4 gap-3 max-lg:mx-auto max-lg:max-w-sm">
                     {productInfo.data?.galleries
@@ -182,7 +191,7 @@ const Page = async ({ params, searchParams }: Props) => {
                       })}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
 
             <div className="flex flex-col gap-6">
@@ -202,7 +211,7 @@ const Page = async ({ params, searchParams }: Props) => {
 
                   <span className="text-base text-primary">20 دیدگاه</span>
                 </div>
-                <AddToFavorite
+                {/* <AddToFavorite
                   className={cn(
                     "flex items-center gap-x-2 text-neutral-500",
                     productInfo.data?.favorite && "text-red-500",
@@ -220,7 +229,7 @@ const Page = async ({ params, searchParams }: Props) => {
                       <RiHeartLine className="text-xl" />
                     </>
                   )}
-                </AddToFavorite>
+                </AddToFavorite> */}
               </div>
 
               <div className="flex flex-col gap-3">
@@ -237,23 +246,6 @@ const Page = async ({ params, searchParams }: Props) => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <h2 className="text-base leading-tight">زنگ‌ها</h2>
-
-                <div className="flex flex-wrap gap-2">
-                  {["bg-black", "bg-gray-500"].map((v) => (
-                    <button
-                      key={v}
-                      className={cn(
-                        "size-12 rounded-full",
-                        v,
-                        v === "bg-gray-500" ? "border-4 border-primary" : "",
-                      )}
-                    />
-                  ))}
-                </div>
-              </div>
-
               <p className="text-xl text-base-300">
                 {`درخواست مرجوع کردن کالا در هارد اکسترنال با دلیل "انصراف از خرید" تنها در صورتی قابل تایید است که کالا در شرایط اولیه باشد.`}
               </p>
@@ -263,7 +255,7 @@ const Page = async ({ params, searchParams }: Props) => {
           <div className="relative hidden h-full w-full lg:block">
             <div className="flex flex-col gap-4 rounded-2xl border border-base-300 p-4">
               <span className="ms-auto text-2xl">
-                {((productInfo.data?.price ?? 10) / 10).toLocaleString()} تومان
+                {((productInfo.data?.price ?? 0) / 10).toLocaleString()} تومان
               </span>
 
               <AddToCartButton product={productInfo.data!} />

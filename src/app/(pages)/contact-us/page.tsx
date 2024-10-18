@@ -18,14 +18,8 @@ import {
   RiWhatsappLine,
 } from "react-icons/ri";
 import Title from "../title";
-import dynamic from "next/dynamic";
 
-const LeafletMap = dynamic(() => import("@/components/map"), {
-  ssr: false,
-  loading: () => (
-    <div className="z-[0] h-full w-full overflow-hidden rounded-3xl bg-base-200" />
-  ),
-});
+
 
 const ContactUs = () => {
   return (
@@ -45,7 +39,9 @@ const ContactUs = () => {
                     className="!scale-x-100 text-[28px] text-primary"
                   />
 
-                  <span className="w-full border-b-2 border-base-200 pb-5 text-base group-last:border-b-0 group-last:pb-0">
+                  <span
+                    className="w-full border-b-2 border-base-200 pb-5 text-right text-base group-last:border-b-0 group-last:pb-0"
+                    dir="ltr">
                     {value}
                   </span>
                 </div>
@@ -59,17 +55,12 @@ const ContactUs = () => {
           </div>
 
           <div className="relative aspect-square w-full">
-            <LeafletMap
-              center={[51.505, -0.09]}
-              zoom={13}
-              scrollWheelZoom={false}
-              className="z-[0] h-full w-full overflow-hidden rounded-3xl"
-            />
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.9251249013714!2d51.25700959999999!3d35.678845599999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8e01c84d224169%3A0x783a05456d5c1f2d!2z2LTYsdqp2Kog2KLYsduM2Kcg2b7Yrti0INix2KfbjNqp2Kc!5e0!3m2!1sen!2s!4v1728293472322!5m2!1sen!2s" width="100%" height="450" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
       </div>
 
-      <div className="relative mt-7 w-full px-5 lg:mt-[100px] lg:px-20">
+      <div className="relative mt-7 w-full px-5 lg:mt-[5px] lg:px-20" id="faq">
         <div className="mx-auto flex w-full max-w-screen-3xl flex-col gap-6">
           <Title>سوالات متداول</Title>
 
@@ -78,8 +69,7 @@ const ContactUs = () => {
               <Accordion key={idx} collapsible type="single">
                 <AccordionItem
                   value="value"
-                  className="min-h-10 rounded-lg bg-base-100 p-3 text-xs shadow-lg lg:min-h-[78px] lg:rounded-2xl lg:p-6 lg:text-base"
-                >
+                  className="min-h-10 rounded-lg bg-base-100 p-3 text-xs shadow-lg lg:min-h-[78px] lg:rounded-2xl lg:p-6 lg:text-base">
                   <AccordionTrigger asChild>
                     <button className="group flex w-full items-center justify-between">
                       <div className="flex items-center gap-1 lg:gap-4">
@@ -107,7 +97,7 @@ const ContactUs = () => {
         </div>
       </div>
 
-      <div className="relative mt-7 w-full px-5 lg:mt-[100px] lg:px-20">
+      <div className="relative mt-7 w-full px-5 lg:mt-[100px] lg:px-20" id="comment">
         <div className="mx-auto flex w-full max-w-screen-3xl flex-col gap-9">
           <Title>نظر خود را ثبت نمایید</Title>
 
@@ -168,19 +158,20 @@ export default ContactUs;
 
 const contactOptions = [
   {
-    value: "تهران، انتهای اتوبان یادگار امام جنوب، خیابان هرمزان، شهرک جی",
+    value:
+      "۸  کیلومتر بزرگراه فتح - غرب به شرق بزرگراه شهید احمد متوسلیان - ساختمان اداری شرکت صنایع بسته - بندی ایران شرکت آریا",
     icon: RiMapPinFill,
   },
   {
-    value: "021-91007380",
+    value: "021-91017083",
     icon: RiPhoneFill,
   },
   {
-    value: "واتس اپ",
+    value: "+98 9961361138",
     icon: RiWhatsappLine,
   },
   {
-    value: "اینستاگرام",
+    value: "@aryapakhshrayka",
     icon: RiInstagramLine,
   },
 ];

@@ -54,9 +54,11 @@ export default function ProfilePage() {
             تاریخ تولد
           </p>
           <p className="line-clamp-1 text-lg font-bold sm:text-xl">
-            {new Date(auth.data?.birthday_date || "").toLocaleDateString(
-              "fa-IR",
-            ) || "-"}
+            {auth.data?.birthday_date
+              ? new Date(auth.data?.birthday_date || "").toLocaleDateString(
+                  "fa-IR",
+                ) || "-"
+              : "-"}
           </p>
         </div>
       </div>

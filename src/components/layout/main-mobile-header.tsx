@@ -1,14 +1,14 @@
 "use client";
 
-import Image from "next/image";
-import Icon from "../ui/icon";
 import siteConfig from "@/config/site";
-import { RiMenuLine, RiSearchLine, RiShoppingCartLine } from "react-icons/ri";
-import Link from "next/link";
-import NavDrawer from "./nav-drawer";
-import { ElementRef, useEffect, useRef, useState } from "react";
 import { cn, jst } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { RiSearchLine, RiShoppingCartLine } from "react-icons/ri";
+import Icon from "../ui/icon";
+import NavDrawer from "./nav-drawer";
 
 const PIXELS_TO_REVEAL = 100;
 const PIXELS_TO_HIDE = 300;
@@ -19,6 +19,8 @@ type Props = {
 
 const MainMobileHeader = ({ routes }: Props) => {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
 
   const [show, setShow] = useState<boolean>(true);
   const lastY = useRef(0);
@@ -67,12 +69,14 @@ const MainMobileHeader = ({ routes }: Props) => {
       <div className="flex w-full items-center justify-between">
         <NavDrawer routes={routes} />
 
-        <Image
-          width={142}
-          height={40}
-          alt={siteConfig.longName}
-          src={siteConfig.mianIconLarge}
-        />
+        <Link href={"/"}>
+          <Image
+            width={142}
+            height={40}
+            alt={siteConfig.longName}
+            src={siteConfig.mianIconLarge}
+          />
+        </Link>
 
         <Link href={"/cart"} className="text-primary">
           <span className="sr-only">سبد خرید</span>
@@ -89,15 +93,18 @@ const MainMobileHeader = ({ routes }: Props) => {
         )}>
         <input
           name="query"
+          defaultValue={searchParams.get("query") || undefined}
           placeholder="جستجو کنید"
           className="h-12 w-full rounded-lg bg-base-200 px-4 outline-none placeholder:text-base-300"
           type="text"
         />
 
-        <Icon
-          icon={RiSearchLine}
-          className="absolute inset-y-0 end-4 my-auto !scale-x-100 text-[21px] text-base-300"
-        />
+        <button type="submit">
+          <Icon
+            icon={RiSearchLine}
+            className="absolute inset-y-0 end-4 my-auto !scale-x-100 text-[21px] text-base-300"
+          />
+        </button>
       </form>
     </div>
   );

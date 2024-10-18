@@ -1,12 +1,11 @@
 import { env } from "@/env";
+import { refreshTokenAction } from "@/lib/refreshTokenAction";
 import { getToken, jst } from "@/lib/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { revalidatePath, revalidateTag } from "next/cache";
 import toast from "react-hot-toast";
 
 export default function useComments() {
-  const queryClient = useQueryClient();
-
   const newComment = useMutation({
     mutationFn: async (args: {
       product?: {
@@ -17,6 +16,12 @@ export default function useComments() {
       text: string;
       callback: () => void;
     }) => {
+      if (!getToken("access"))
+        return toast.error("لطفا وارد حساب کاربری خود شوید.");
+
+      // Refresh token
+      await refreshTokenAction();
+
       const res = await fetch(
         jst(env.NEXT_PUBLIC_BACKEND_URL, "/api/product/comment"),
         {

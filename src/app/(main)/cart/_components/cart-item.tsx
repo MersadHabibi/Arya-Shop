@@ -1,15 +1,19 @@
 "use client";
 
 import Icon from "@/components/ui/icon";
+import { env } from "@/env";
 import useCart from "@/hooks/use-cart";
+import useProduct from "@/hooks/use-products";
 import { jst } from "@/lib/utils";
 import { CartResponseItem } from "@/types/entity";
+import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import {
   RiAddLine,
   RiDeleteBinLine,
   RiImage2Line,
-  RiSubtractLine
+  RiSubtractLine,
 } from "react-icons/ri";
 
 type Props = {
@@ -18,6 +22,8 @@ type Props = {
 
 const CartItem = ({ data }: Props) => {
   const { removeFromCart, increment, decrement, isPending } = useCart();
+
+  const product = useProduct({ id: data.product.Code });
 
   return (
     <div className="grid w-full grid-cols-[80px_1fr] gap-4 overflow-hidden rounded-2xl border border-base-200 p-4 min-[300px]:grid-cols-[104px_1fr] lg:grid-cols-[200px_1fr] lg:gap-4">
@@ -30,22 +36,36 @@ const CartItem = ({ data }: Props) => {
             String(data!.product.Code),
           )}
           className="relative aspect-square w-full">
-          <div className="grid size-full place-items-center rounded-lg bg-base-200">
-            <Icon
-              icon={RiImage2Line}
-              className="text-[40px] text-base-300 lg:text-[60px]"
+          {data.product?.galleries?.image ? (
+            <Image
+              fill
+              src={env.NEXT_PUBLIC_IMAGE_URL + data.product.galleries.image}
+              alt=""
             />
-          </div>
+          ) : (
+            <div className="grid size-full place-items-center rounded-lg bg-base-200">
+              <Icon
+                icon={RiImage2Line}
+                className="text-[40px] text-base-300 lg:text-[60px]"
+              />
+            </div>
+          )}
         </Link>
 
         <div className="my-aut grid h-12 grid-cols-3 place-items-center rounded-lg border border-base-200 px-2 text-secondary lg:h-16 lg:px-4">
           <button
             onClick={() => {
+              if (data.quantity >= (product.data?.quantity ?? 0))
+                return toast.error("محصول بیشتری موجود نیست!");
+
               increment.mutate({
                 id: data.product.Code,
               });
             }}
-            disabled={isPending}>
+            disabled={
+              isPending || data.quantity >= (product.data?.quantity ?? 0)
+            }
+            className="disabled:opacity-70">
             <Icon className="lg:text-[28px]" icon={RiAddLine} />
           </button>
 
@@ -95,6 +115,9 @@ const CartItem = ({ data }: Props) => {
           <span className="text-base text-base-300">
             گارانتی اصالت و سلامت فیزیکی کالا
           </span>
+          <p className="mb-1 mt-1 text-base text-primary lg:mt-2">
+            موجودی: {product.data?.quantity}
+          </p>
 
           <span className="mb-3 mt-auto text-base font-black text-secondary lg:mb-4 lg:text-xl">
             {((data.amount ?? 0) / 10).toLocaleString()} تومان

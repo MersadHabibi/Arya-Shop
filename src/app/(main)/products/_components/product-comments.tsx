@@ -2,6 +2,7 @@
 
 import Pagination from "@/components/pagination";
 import { Comment, PaginatedResponse } from "@/types/entity";
+import { Suspense } from "react";
 
 type Props = {
   data: PaginatedResponse<Comment>;
@@ -21,8 +22,7 @@ const ProductComments = ({ data }: Props) => {
         {data?.results?.map((item, idx) => (
           <article
             key={idx}
-            className="flex flex-col gap-3 rounded-xl border border-base-300 p-6"
-          >
+            className="flex flex-col gap-3 rounded-xl border border-base-300 p-6">
             <h3 className="text-[28px] font-bold">
               {item.user.name ?? "کاربر عزیز"}
             </h3>
@@ -71,13 +71,15 @@ const ProductComments = ({ data }: Props) => {
         ))}
       </div>
 
-      <Pagination
-        count={data.count}
-        next={data.next}
-        pageKey="page"
-        previous={data.previous}
-        pageSize={10}
-      />
+      <Suspense>
+        <Pagination
+          count={data.count}
+          next={data.next}
+          pageKey="page"
+          previous={data.previous}
+          pageSize={10}
+        />
+      </Suspense>
     </>
   );
 };

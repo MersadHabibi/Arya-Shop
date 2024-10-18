@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { refreshTokenAction } from "@/lib/refreshTokenAction";
 import { getToken, jst } from "@/lib/utils";
 import { PaginatedResponse, Product } from "@/types/entity";
 import { useQuery } from "@tanstack/react-query";
@@ -7,10 +8,9 @@ export default function useFavorites({ page }: { page: number }) {
   const favorites = useQuery({
     queryKey: ["favorites", page],
     queryFn: async () => {
-      console.log("page", page);
       try {
         // Refresh token
-        // await refreshTokenAction();
+        await refreshTokenAction();
 
         // Get profile
         const res = await fetch(
@@ -26,7 +26,6 @@ export default function useFavorites({ page }: { page: number }) {
           },
         );
 
-        console.log(res);
 
         if (!res?.ok) return null;
 

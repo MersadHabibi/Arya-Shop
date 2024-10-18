@@ -5,6 +5,7 @@ import { Product } from "@/types/entity";
 import { useMemo } from "react";
 import { RiAddLine, RiDeleteBinLine, RiSubtractLine } from "react-icons/ri";
 import Icon from "./ui/icon";
+import toast from "react-hot-toast";
 
 type Props = {
   product: Product;
@@ -38,16 +39,19 @@ const AddToCartButton = ({ product }: Props) => {
       <div className="flex h-12 w-full animate-pulse items-center justify-between rounded-btn bg-base-200 px-5 text-lg lg:h-16 lg:px-6" />
     );
 
-  if (inCart)
+  if (inCart) {
     return (
       <div className="flex h-12 w-full items-center justify-between rounded-btn border border-base-200 px-5 text-lg lg:h-16 lg:px-6">
         <button
           onClick={() => {
+            if (inCart.quantity >= product.quantity)
+              return toast.error("محصول بیشتری موجود نیست!");
             increment.mutate({
               id: product.Code,
             });
           }}
-          disabled={isPending}>
+          disabled={isPending || inCart.quantity >= product.quantity}
+          className="disabled:opacity-70">
           <Icon className="text-[28px] text-primary" icon={RiAddLine} />
         </button>
 
@@ -82,6 +86,7 @@ const AddToCartButton = ({ product }: Props) => {
         )}
       </div>
     );
+  }
 
   return (
     <button

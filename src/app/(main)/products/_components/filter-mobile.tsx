@@ -1,12 +1,11 @@
 "use client";
 
-import Icon from "@/components/ui/icon";
-import { RiSearchLine } from "react-icons/ri";
-import MobileSelect from "./mobile-select";
-import DrawerSelect from "./drawer-select";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Brand, Category } from "@/types/entity";
 import { jst } from "@/lib/utils";
+import { Brand, Category } from "@/types/entity";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import DrawerSelect from "./drawer-select";
+import PriceRange from "./PriceRange";
+import QuantityFilter from "./QuantityFilter";
 
 type Props = {
   brands: Brand[];
@@ -28,7 +27,7 @@ const FilterMobile = ({ brands, categories }: Props) => {
 
             const q = new URLSearchParams(Array.from(searchParams.entries()));
 
-            q.set("brand", v.value);
+            q.set("category", v.value);
 
             router.push(jst(pathname, "?", q.toString()));
           }}
@@ -53,7 +52,7 @@ const FilterMobile = ({ brands, categories }: Props) => {
 
             const q = new URLSearchParams(Array.from(searchParams.entries()));
 
-            q.set("category", v.value);
+            q.set("brand", v.value);
 
             router.push(jst(pathname, "?", q.toString()));
           }}
@@ -70,6 +69,50 @@ const FilterMobile = ({ brands, categories }: Props) => {
               : null
           }
         />
+
+        <QuantityFilter
+          label="موجودی"
+          onChange={(v) => {
+            if (!v) return;
+
+            if (v.value === "0") {
+              const q = new URLSearchParams(Array.from(searchParams.entries()));
+
+              q.set("quantity", v.value);
+
+              router.push(jst(pathname, "?", q.toString()));
+            } else {
+              const q = new URLSearchParams(Array.from(searchParams.entries()));
+
+              q.delete("quantity");
+
+              router.push(jst(pathname, "?", q.toString()));
+            }
+          }}
+          options={[
+            {
+              display: "فقط کالاهای موجود",
+              value: "0",
+            },
+            {
+              display: "همه کالاها",
+              value: "",
+            },
+          ]}
+          value={
+            searchParams.get("quantity")
+              ? {
+                  display: "فقط کالاهای موجود",
+                  value: "0",
+                }
+              : {
+                  display: "همه کالاها",
+                  value: "",
+                }
+          }
+        />
+
+        <PriceRange />
       </div>
     </>
   );
